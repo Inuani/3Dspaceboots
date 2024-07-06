@@ -1,0 +1,7 @@
+type Boot = 
+ service {
+   calc: (nat, nat) -> (nat) query;
+   sayHelloTo: (text) -> (text) query;
+   url_scan_tag: (text) -> (bool);
+ };
+service : () -> Boot
