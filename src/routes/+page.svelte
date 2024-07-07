@@ -8,7 +8,6 @@
   
     const clickMe = async () => {
       try {
-        // Call the IC
         greeting = await $ic.actor.sayHelloTo(input);
   
       } catch (err: unknown) {
