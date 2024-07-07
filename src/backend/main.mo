@@ -21,8 +21,8 @@ shared ({ caller = creator }) actor class Boot() = this {
     return a + b;
   };
 
-    public shared func url_scan_tag(url: Text) : async Bool {
-      Debug.print(url);
+    public shared ({ caller }) func url_scan_tag(url: Text) : async Bool {
+      Debug.print(Principal.toText(caller));
         let counter = Scan.scan(url, scan_count);
         if (counter <= 0) {
           return false
