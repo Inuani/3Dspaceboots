@@ -1,11 +1,14 @@
 <script lang="ts">
     import { backendActor } from "$lib/actor";
     import { abandoning_events, temporary_shared_events } from "$lib/event";
+    import Scene from "../scene.svelte";
 
+	import { Canvas } from '@threlte/core'
 
     import RadioButton from "./RadioButton.svelte";
 
-    export let owner = false;
+    export let updated = false;
+    export let owner = 0;
     let new_event_name = "";
 
     async function share_object() {
@@ -15,8 +18,8 @@
         }
 
         try {
-            let ownerhsip = await $backendActor.update_asset("",event_name, "", message);
-            console.log("ownership set", ownerhsip)
+            let ownerhsip = await $backendActor.update_asset(url,event_name, "", message);
+            updated = true;
         } catch (err) {
             console.error(err);
         }
@@ -37,71 +40,86 @@
     }
 
     var nanosecond_per_day =  1000000000n * 60n * 60n * 24n
-
+    var url = "";
 </script>
 
 
 <style>
-    /* Basic styling */
+
+    p {
+        margin: auto;
+    }
+    /* Neo-brutalism styling */
     .container {
-        max-width: 600px;
+        /* max-width: 60%; */
+        height: 26vw;
         margin: 0 auto;
-        padding: 20px;
-        border: 1px solid #ccc;
+        padding: 2vw;
+        border: 2px solid var(--border); /* Bold borders */
+        background-color: #f0f0f0; /* Light grey background */
+        box-shadow: 10px 10px 0 var(--border); /* Bold shadow for depth */
+        font-family: 'Arial var(--border)', sans-serif; /* Bold font */
+        font-size: 1rem;
+        text-transform: uppercase; /* Uppercase text */
         border-radius: 5px;
-        background-color: #f9f9f9;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        width: 100%;
     }
 
     input[type="text"],
     textarea {
         width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        padding: 1vw;
+        margin: 1vw 0;
+        border: 2px solid var(--border); /* Bold borders */
         box-sizing: border-box;
-        font-size: 14px;
+        font-size: 1rem;
+        background-color: var(--background); /* White background for inputs */
+        box-shadow: 5px 5px 0 var(--border); /* Bold shadow for inputs */
         resize: vertical;
+        border-radius: 5px;
     }
 
     button {
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
+        transition: all 0.3s ease;
+        background-color: var(--main-color); /* Bright orange background */
+        color: white; /* White text */
+        padding: 15px 30px;
+        border: 2px solid var(--border); /* Bold border */
         cursor: pointer;
-        font-size: 16px;
+        font-size: 1rem;
+        box-shadow: 5px 5px 0 var(--border); /* Bold shadow */
+        text-transform: uppercase; /* Uppercase text */
+        border-radius: 5px;
     }
 
     button:hover {
-        background-color: #45a049;
+      background-color: var(--main-color-hover); /* Vibrant yellow on hover */
+      transform: translate(5px, 5px); /* Slight lift effect on hover */
+      box-shadow: 0px 0px 0; /* Bold shadow for depth */
     }
 
-    .message {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #888;
-    }
 </style>
 
 <div class="container">
-    {#if !owner}
-        {#await backendActor.get_timer()}
+    {#if owner != 1}
+        {#await $backendActor.get_timer()}
             <p>loading timer...</p>
         {:then time}
             {#if time > nanosecond_per_day}
-                <p>Stranger can send message</p>
+                <input bind:value={event_name} placeholder="Event name..." type="text">
+                <textarea bind:value={message} placeholder="Message..."  ></textarea>
+                <input bind:value={url} placeholder="New scan..." type="text">
+                <button on:click={share_object}>Post object update</button>
             {:else}
-                <p>Stranger cannot send message: {nanoseconds_to_time(nanosecond_per_day - time)} before next update.</p>
+                <p>{nanoseconds_to_time(nanosecond_per_day - time)} before next update.</p>
             {/if}
         {/await}
+    {:else}
+        <input bind:value={event_name} placeholder="Event name..." type="text">
+        <textarea bind:value={message} placeholder="Message..."  ></textarea>
+        <button on:click={share_object}>Post object update</button>
     {/if}
-
-    <input bind:value={event_name} placeholder="Event name..." type="text">
-    <textarea bind:value={message} placeholder="Message..."  ></textarea>
-    <button on:click={share_object}>Share Object</button>
 
     <!-- Example RadioButton usage (if uncommented in your actual code) -->
     <!-- <RadioButton legend="How do you Update the object?" values={temporary_shared_events()} bind:value={new_event_name} /> -->

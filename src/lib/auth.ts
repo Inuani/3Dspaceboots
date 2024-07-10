@@ -75,7 +75,7 @@ const initAuthStore = (): AuthStore => {
             ...data,
             identity: authClient?.getIdentity(),
           }));
-         console.log('Principal:', authClient?.getIdentity().getPrincipal().toText());
+          location.reload();
         },
         windowOpenerFeatures: popupCenter({ width: AUTH_POPUP_WIDTH, height: AUTH_POPUP_HEIGHT }),
       });

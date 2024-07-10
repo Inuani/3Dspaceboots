@@ -19,81 +19,105 @@
     function nanosecondsToDate(nanoseconds) {
         // Convert nanoseconds to milliseconds
         const milliseconds = Number(nanoseconds / BigInt(1_000_000));
-        return new Date(milliseconds);
+        return new Date(milliseconds).toLocaleString();
     }
 
   </script>
   
 
   <style>
+    
+    .main  
+    {
+
+        /* max-height: 26vw; */
+        padding: 2vw;
+        border: 2px solid var(--border); /* Bold borders */
+        background-color: var(--background2); /* Light grey background */
+        box-shadow: 10px 10px 0 var(--border); /* Bold shadow for depth */
+        border-radius: 5px;
+        width: 100%;
+    }
+
     /* Neo-brutalism styling */
     .timeline {
-      overflow-y: auto;
-      max-height: 400px; /* Adjust as needed */
-      padding: 20px;
-      border: 2px solid black; /* Bold borders */
-      background-color: #f0f0f0; /* Light grey background */
-      box-shadow: 10px 10px 0 black; /* Bold shadow for depth */
+        overflow-y: auto;
+        /* max-height: 26vw; */
+        height: 100%;
+        border-radius: 5px;
+        width: 100%;
+        padding: 2pw;
     }
   
     .event {
-      margin-bottom: 20px;
-      padding: 20px;
-      border-left: 5px solid #ff5733; /* Bright orange for event border */
-      background-color: #ffffff; /* White background for events */
-      border: 2px solid black; /* Bold border for events */
-      box-shadow: 5px 5px 0 black; /* Bold shadow for events */
-      font-family: 'Arial Black', sans-serif; /* Bold font */
-      font-size: 1rem;
-      text-transform: uppercase; /* Uppercase text */
+        margin-bottom: 20px;
+        padding: 1vw;
+        border-left: 5px solid var(--main-color); /* Bright orange for event border */
+        background-color: var(--background); /* White background for events */
+        border: 2px solid var(--border); /* Bold border for events */
+        box-shadow: 5px 5px 0 var(--border); /* Bold shadow for events */
+        font-family: 'Arial black', sans-serif; /* Bold font */
+        font-size: 1rem;
+        text-transform: uppercase; /* Uppercase text */
+        border-radius: 5px;
     }
   
     .event-type {
       font-weight: bold;
       margin-bottom: 10px;
-      color: #ff5733; /* Bright orange for event type */
+      color: var(--main-color); /* Bright orange for event type */
+        border-radius: 5px;
     }
   
-    .event-details {
-      margin-left: 20px;
-      color: #333333; /* Dark grey for event details */
+   
+    .message {
+        border: 2px solid var(--border); /* Bold border for message */
+        border-radius: 5px;
+        padding: 1vw;
+
     }
-  
-    .event-details p {
-      margin: 5px 0; /* Consistent spacing for paragraphs */
+
+    @media (orientation: portrait) {
+        .main {
+            all: unset;
+            height: 100vw;
+        }
+        .timeline {
+            overflow: visible;
+        }
     }
   </style>
 
-
+<div class="main">
+    
+<div class="timeline">
 {#await get_history()}
-    mmmm...
+    <p>loading history...</p>
 {:then _} 
-    <div class="timeline">
         {#each history as event}
-        <div class="event">
-            <div class="event-type">Type: {event.event_type}</div>
-            <div>Name: {event.event_name}</div>
-            <div class="event-details">
+            <div class="event">
+                <div class="event-type">{event.event_type}</div>
+                <div style="color:var(--main-color-hover)" >{event.event_name}</div>
+                <!-- <div class="event-details"> -->
 
-            {#if event.owner_name.length > 0}
-            
-                <p>Owner: {event.owner_name[0] || 'Unknown'}</p>
-            {/if}
+                {#if event.owner_name.length > 0}
+                    <p>writer: {event.owner_name[0] || 'Unknown'}</p>
+                {/if}
+                {#if event.message}
+                
+                    <fieldset class="message"> 
+                        
+                    <legend>content</legend>
+                        {event.message}
+                    </fieldset>
+                {/if}
+                <p>{nanosecondsToDate(event.time)}</p>
+                </div>
+            <!-- </div> -->
+        {/each}
 
-            {#if event.message}
-            
-                <p>Message: {event.message}</p>
-            {/if}
-            <p>Scan Count at the event: {event.scan_count}</p>
-            <p>Time: {nanosecondsToDate(event.time)}</p>
-            </div>
-        </div>
-        {/each}
-    </div>
-    <!-- <p>
-        {#each history as event}
-            {event_type = Object.keys(event.event_type)}
-        {/each}
-    </p> -->
 {/await}
 
+
+</div>
+</div>

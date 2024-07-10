@@ -11,7 +11,9 @@
     import { backendActor } from '$lib/actor';
     import { browser } from '$app/environment';
     import History from './History.svelte';
-  
+    import { goto } from '$app/navigation';
+
+
       const init = async () => {
         await Promise.all([
             syncAuthStore(),
@@ -35,7 +37,7 @@
         checkValidScan();
       });
   
-    let valid_scan = false;
+    let valid_scan: boolean | null = null;
   
     const checkValidScan = async () => {
       try {
@@ -46,29 +48,79 @@
       }
     };
    
-
+    checkValidScan()
 </script>
-<main class="scene">
-    <h1>New shoe</h1>
-    <!-- {#if valid_scan} -->
-        <Canvas>
-            <Scene valid={valid_scan}/>
-        </Canvas>
-        <History />
-    <!-- {:else}
-      <p>Scan error</p>
-    {/if} -->
-</main>
 
 <style>
-	.scene {
 
-		position: absolute;
-		inset: 10%;
-        color: aliceblue;
-        font-family: 'Roboto', sans-serif;
-        text-align: center;
-		background: radial-gradient(hsl(0, 72%, 67%), hsl(0, 66%, 33%));
+    .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        /* padding: 2vw; */
+        gap: 2vw;
+        font-family: 'Arial black', sans-serif; /* Bold font */
+    }
+
+    .history {
+        /* height: 300vw; */
+        width: 76vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         
-	}
+    }
+
+    button {
+        background-color: var(--main-color); /* Bright orange background */
+        color: white; /* White text */
+        padding: 1vw 2vw;
+        width: 80vw;
+        border: 2px solid var(--border); /* Bold border */
+        cursor: pointer;
+        font-size: 1rem;
+        box-shadow: 5px 5px 0 var(--border); /* Bold shadow */
+        text-transform: uppercase; /* Uppercase text */
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    button:hover {
+        background-color: var(--main-color-hover); /* Darker red on hover */
+        translate: 5px, 5px; /* Slight lift effect on hover */
+        box-shadow: 0px 0px 0; /* Bold shadow for depth */
+    }
 </style>
+
+<body>
+    
+<div class="main">
+
+    {#if valid_scan === true}
+        <p style="color:greenyellow;">Valid Scan</p>
+    {:else if valid_scan === false}
+        <p style="color:red;" >Invalid Scan</p>
+    {:else}
+        <p>loading...</p>
+    {/if}
+
+
+    <Scene bind:valid={valid_scan}/>
+
+
+
+    <button on:click={() => goto("/admin")}>
+
+        more
+
+    </button>
+
+    <div class="history">
+        <History />
+    </div>
+
+</div>
+
+</body>

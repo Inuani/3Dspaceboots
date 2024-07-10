@@ -54,21 +54,19 @@ module {
     result;
   };
 
+    // scan the url and return 0 if the scan is invalid, the counter if the scan is valid
     public func scan(url : Text, scan_count : Nat) : Nat {
-        Debug.print("1");
 
+        // split the url into the base url and the query and always check if the query is valid
         let full_query = Iter.toArray(Text.split(url, #char '?'));
         if (full_query.size() != 2) {
             return 0;
         };
-         Debug.print("1");
 
         let queries = Iter.toArray(Text.split(full_query[1], #char '&'));
-
         if (queries.size() != 3) {
             return 0;
         };
-         Debug.print("1");
 
         let cmac_query = Iter.toArray(Text.split(queries[2], #char '='));
         let counter_query = Iter.toArray(Text.split(queries[1], #char '='));
@@ -76,31 +74,29 @@ module {
         if (cmac_query.size() != 2 or counter_query.size() != 2 or cmac_query[0] != "cmac" or counter_query[0] != "ctr") {
             return 0;
         };
-         Debug.print("1");
 
+
+        // convert the hex counter to a number
         var counter = hexToNat(counter_query[1]);
 
-        // counter = to_hex(counter);
+        // get the hashed computed cmac
         let cmacs = Cmac.get_cmacs();
 
+        // sha256 the cmac query
         let sha = Sha.sha256(Array.map(Text.toArray(cmac_query[1]), func (c : Char) : Nat8 { Nat8.fromNat(Nat32.toNat(Char.toNat32(c)))}));
-    
 
-
+        // check if the counter is valid (not too low, that would mean the scan is an old one)
         if (counter >= cmacs.size() or counter <= scan_count) {
             return 0;
         };
-         Debug.print("1");
     
+        // iterate throw the two hash, if it's not the same, the scan is invalid and 0 is returned, otherwise the counter is returned
         var res = counter;
-
         for (i in Iter.range(0, sha.size() - 1)) {
             if (Nat8.toNat(sha[i]) != hexToNat(subText(cmacs[counter - 1], i * 2, i * 2 + 2))) {
                 res := 0;
             };
         };
-         Debug.print(Nat.toText(res));
-
         return res;
     };
 

@@ -17,6 +17,9 @@
     import Abandon from './Abandon.svelte';
     import NavBar from './NavBar.svelte';
     import { fade } from 'svelte/transition';
+    import Scene from '../scene.svelte';
+    import More from './More.svelte';
+    import Login from './Login.svelte';
 
 
 
@@ -45,17 +48,6 @@
       };
   
 
-  
-      let last_event;
-
-      onMount(async () => {
-        await init();
-        await checkValidScan();
-      });
-  
-    const handleLogin = () => authStore.signIn();
-  
-    let valid_scan = false;
     const checkValidScan = async () => {
       try {
         console.log($page.url.href);
@@ -65,7 +57,6 @@
       }
     };
 
-
     let last_event_type: string = "";
     let active_tab : string;
     let owner = 0;
@@ -73,69 +64,75 @@
     async function get_last_event(){
         // last_event = await $backendActor.get_last_event();
         // console.log(last_event)
+        await init();
         owner = await $backendActor.owning_state();
+        console.log(owner);
+        console.log(active_tab)
     }
+
+    let updated = false;
+
+    $: updated && (active_tab = "history");
+
+    let _height: number, _width : number;
 
 
   </script>
 
-{#if $isUserAuthStore}
-    
+    <svelte:window bind:innerWidth={_width}  bind:innerHeight={_height} />
 
     {#await get_last_event()}
         <p>loading...</p>
     {:then _}
 
-        
-        {#if owner != 1}
-
-            {#if owner == 0}
-                <NavBar bind:activeTab={active_tab} tabs= {["own", "update", "history"]}/>
-
-                {#if active_tab == "own"}
-                    Shoes are ownable
-                    <Owning />
+            {#key $isUserAuthStore}
+                
+                {#if !$isUserAuthStore}
+                    <NavBar bind:activeTab={active_tab} tabs= {["own", "update", "history"]}/>
+                {:else if owner == 0}
+                    <NavBar bind:activeTab={active_tab} tabs= {["own", "update", "history", "more"]}/>
+                {:else if owner == 2}
+                    <NavBar bind:activeTab={active_tab} tabs= {["update", "history", "more"]}/>
+                {:else}
+                    <NavBar bind:activeTab={active_tab}></NavBar>
                 {/if}
-            {:else}
-                <NavBar bind:activeTab={active_tab} tabs= {["update", "history"]}/>
-            {/if}
 
-            {#if active_tab == "update"}
-                <Update owner={owner} />
-            {/if}
-
-            {#if active_tab == "history"}
-                <History />
-            {/if}
-
-        {:else}
-
-        <NavBar bind:activeTab={active_tab}>
-        <button on:click={ () => authStore.signOut() }>logout</button>
-        </NavBar>
-
-        {#key active_tab}
+            {/key}
             
-        <div in:fade|global>
-            {#if active_tab == "modify"}
-                <Modify />
-            {:else if active_tab == "update"}
-                <Update owner={owner} />
-            {:else if active_tab == "abandon"}
-                <Abandon />
-            {:else}
-                <History />
-            {/if}
-        </div>
-        {/key}
-            <!-- <Modify />
-            <Share />
-            <Abandon />
-            <Destroy /> -->
+        <div >
+            <div class="content">
 
-        {/if}
-    <!-- {:catch error}
-        <p>errorm: {error.message}</p> -->
+                <div class = "left">
+
+                    <Scene valid={owner == 1}/>
+                </div>
+
+                {#key active_tab}
+                    <div in:fade|global class="right">
+
+                        {#if active_tab == "update"}
+                            <Update bind:updated={updated} owner={owner} />
+                        {:else if active_tab == "abandon"}
+                            <Abandon />
+                        {:else if active_tab == "own"}
+                            {#if $isUserAuthStore}
+                                <Owning />
+                            {:else}
+                                <Login />
+                            {/if}
+                        {:else if active_tab == "history"}
+                            <History />
+                        {:else if active_tab == "more"}
+                            <More />
+                        {:else}
+                            <h1>404</h1>
+                        {/if}
+                    </div>
+                {/key}
+            </div>
+        </div>
+
+
     {/await}
 
 
@@ -157,9 +154,8 @@
     {/if} -->
 
 
-{:else}
-    <button on:click={handleLogin}>login</button>
-{/if}
+    <!-- <button on:click={handleLogin}>login</button> -->
+
 
 
 
@@ -168,6 +164,43 @@
 
 
   <style>
+
+.content {
+    display: flex;
+    justify-content: center;
+    gap: 2vw;
+    align-items: center;
+    /* height: 100vw;
+    width: 100vw; */
+    /* background-color: #f0f0f0; */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    color: #333;
+    height: 30vw;
+}
+.right {
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    height: 30vw;
+}
+
+@media (orientation: portrait) {
+    .content {
+        flex-direction: column;
+        gap: 5vw;
+    }
+
+    .right {
+        width: 80vw;
+        height: 50vw;
+    }
+    .left {
+        width: 10vmin;
+        height: 10vmin;
+    }
+}
+
 
     * {
         font-family: 'Roboto', sans-serif;

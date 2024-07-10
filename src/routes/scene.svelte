@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { T, useFrame } from '@threlte/core'
+	import { T, useFrame, Canvas } from '@threlte/core'
 	import { OrbitControls, useGltf } from '@threlte/extras'
-    export let valid;
-	let y = 2
+    import { onMount } from 'svelte';
+    export let valid = false;
+
+    let y = 0;
 	let rotation = 0
 
-  // Spooky floating ghost 👻
+//   // Spooky floating ghost 👻
 	function levitate() {
 		const time = Date.now() / 1000
 		const speed = 1
@@ -15,33 +17,53 @@
 	}
 
   // Rotates model on `Y` axis
-	useFrame((_, delta) => {
-		rotation += delta * 0.4
-	})
-
 	levitate()
+
+    onMount(async () => {
+        
+        useFrame((_, delta) => {
+            rotation += delta * 0.4
+        })
+    });
+
 </script>
 
-<!-- Bloom postprocessing effect -->
+    <div>
 
-<!-- Orthographic camera -->
-<T.OrthographicCamera position={[20, 20, 20]} zoom={40} makeDefault>
-	<!-- Controls -->
-	<OrbitControls enableDamping />
-</T.OrthographicCamera>
+        <Canvas>
+            <T.OrthographicCamera position={[20, 20, 20]} zoom={40} makeDefault>
+                <OrbitControls autoRotate enableDamping rotateSpeed={valid ? 1 : 0} />
+            </T.OrthographicCamera>
+        <T.AmbientLight color="#ffffff" intensity={valid ? 3 : 0.5} />
+            
+            
+            {#await useGltf('/shoe/lowpoly.gltf') then ghost}
+                <T is={ghost.scene} position={[0, 0, 0]} scale={0.6} rotation={[0, Math.PI * rotation, Math.PI * 0]} />
+            {/await}
+        </Canvas>
+    </div>
 
-<!-- Ambient light for ambience -->
-<T.AmbientLight color="#ffffff" intensity={valid ? 10 : 3} />
+<style>
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30vw;
+        width: 30vw;
+		background: radial-gradient(var(--main-color-hover), var(--main-color) );
+        border: 2px solid var(--border);
+        border-radius: 5px;
+        box-shadow: 5px 5px 0 var(--border);
 
-<!-- Main light -->
-<!-- <T.PointLight intensity={2} position={[4, 2, 4]} color="#76aac8" /> -->
+    }
 
-<!-- Ghost -->
-{#await useGltf('/shoe/lowpoly.gltf') then ghost}
-	<T is={ghost.scene} position={[0, 0, 0]} scale={1} rotation={[Math.PI * 0.5, Math.PI * 0.4, Math.PI * -0.5]} />
-{/await}
+    @media (orientation: portrait) {
+        div {
+            height: 80vmin;
+            width: 80vmin;
+        }
+    }
 
-<!-- Garden -->
-<!-- {#await useGltf('/assets/garden.glb') then garden}
-	<T is={garden.scene} rotation.y={rotation} />
-{/await} -->
+</style>
+
+
