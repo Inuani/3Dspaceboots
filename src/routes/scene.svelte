@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { T, useFrame } from '@threlte/core'
 	import { OrbitControls, useGltf } from '@threlte/extras'
-
+    export let valid;
 	let y = 2
 	let rotation = 0
 
@@ -25,20 +25,20 @@
 <!-- Bloom postprocessing effect -->
 
 <!-- Orthographic camera -->
-<T.OrthographicCamera position={[10, 10, 10]} zoom={40} makeDefault>
+<T.OrthographicCamera position={[20, 20, 20]} zoom={40} makeDefault>
 	<!-- Controls -->
 	<OrbitControls enableDamping />
 </T.OrthographicCamera>
 
 <!-- Ambient light for ambience -->
-<T.AmbientLight color="#ffffff" intensity={10} />
+<T.AmbientLight color="#ffffff" intensity={valid ? 10 : 3} />
 
 <!-- Main light -->
 <!-- <T.PointLight intensity={2} position={[4, 2, 4]} color="#76aac8" /> -->
 
 <!-- Ghost -->
-{#await useGltf('/shoe.glb') then ghost}
-	<T is={ghost.scene} position={[0, 0, 0]} scale={4} />
+{#await useGltf('/shoe/lowpoly.gltf') then ghost}
+	<T is={ghost.scene} position={[0, 0, 0]} scale={1} rotation={[Math.PI * 0.5, Math.PI * 0.4, Math.PI * -0.5]} />
 {/await}
 
 <!-- Garden -->

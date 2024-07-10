@@ -1,38 +1,74 @@
 <script lang="ts">
-    import { ic } from '../lib/stores/ic';
-    const about = "call sayHelloTo function";
-    let input = '', greeting = '';
+
   
 	import { Canvas } from '@threlte/core'
 	import Scene from './scene.svelte'
+
+
+    import { page } from '$app/stores';
+    import { onMount } from 'svelte';
+    import { authStore } from '$lib/auth';
+    import { backendActor } from '$lib/actor';
+    import { browser } from '$app/environment';
+    import History from './History.svelte';
   
-    const clickMe = async () => {
+      const init = async () => {
+        await Promise.all([
+            syncAuthStore(),
+        ]);
+      };
+  
+      const syncAuthStore = async () => {
+      if (!browser) {
+          return;
+      }
       try {
-        greeting = await $ic.actor.sayHelloTo(input);
-  
+          await authStore.sync();
       } catch (err: unknown) {
+          console.error(err);
+      }
+      };
+  
+  
+      onMount(async () => {
+        await init();
+        checkValidScan();
+      });
+  
+    let valid_scan = false;
+  
+    const checkValidScan = async () => {
+      try {
+        console.log($page.url.href);
+        valid_scan = await $backendActor.url_scan_tag($page.url.href);
+      } catch (err) {
         console.error(err);
       }
     };
    
-   </script>
-  
-     <div>
-      <span class="highlight">{about}</span>
-    </div>
-   
-     <form>
-       <label for="name">Say hello to: </label>
-       <input id="name" alt="Name" type="text" bind:value={input}/>
-       <button type="button" on:click={clickMe}>Click Me!</button>
-     </form>
-   
-   <div class="result">
-    {greeting}
-   </div>
-   <style></style>
 
-   
-<Canvas>
-	<Scene />
-</Canvas>
+</script>
+<main class="scene">
+    <h1>New shoe</h1>
+    <!-- {#if valid_scan} -->
+        <Canvas>
+            <Scene valid={valid_scan}/>
+        </Canvas>
+        <History />
+    <!-- {:else}
+      <p>Scan error</p>
+    {/if} -->
+</main>
+
+<style>
+	.scene {
+
+		position: absolute;
+		inset: 10%;
+        color: aliceblue;
+        font-family: 'Roboto', sans-serif;
+        text-align: center;
+		background: radial-gradient(hsl(0, 72%, 67%), hsl(0, 66%, 33%));
+        
+	}
+</style>

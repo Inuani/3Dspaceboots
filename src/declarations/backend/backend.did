@@ -1,7 +1,25 @@
+type Time = int;
+type Event = 
+ record {
+   event_name: text;
+   event_type: text;
+   images: opt vec blob;
+   message: text;
+   owner: opt principal;
+   owner_name: opt text;
+   scan_count: nat;
+   time: Time;
+ };
 type Boot = 
  service {
-   calc: (nat, nat) -> (nat) query;
-   sayHelloTo: (text) -> (text) query;
+   abandon_ownership: (text, text) -> (bool);
+   get_history: () -> (vec Event) query;
+   get_last_event: () -> (Event) query;
+   get_timer: () -> (Time) query;
+   modify_asset: (text, text) -> (bool);
+   owning_state: () -> (int);
+   request_ownership: (text, text, text, text) -> (bool);
+   update_asset: (text, text, text, text) -> (bool);
    url_scan_tag: (text) -> (bool);
  };
 service : () -> Boot

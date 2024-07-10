@@ -9,7 +9,7 @@ import Nat32 "mo:base/Nat32";
 import Debug "mo:base/Debug";
 import Sha "sha";
 import Cmac "cmac";
-import Result "mo:base/Result";
+
 
 module {
 

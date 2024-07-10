@@ -3,121 +3,154 @@ import Principal "mo:base/Principal";
 import Text "mo:base/Text";
 import Bool "mo:base/Bool";
 import Array "mo:base/Array";
-import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Scan "scan";
 import Event "event";
 
 shared ({ caller = creator }) actor class Boot() = this {
 
-    stable var owner : ?Principal = null;
-
-    stable var stolen : Bool = false;
-
-    stable var lost : Bool = false;
-
-    stable var scan_count : Nat = 0;
-
-    type Result<Ok, Err> = {#ok : Ok; #err : Err};
+    // TODO : Put everything stable
 
 
 
-    stable var history : [Event.Event] = [];
+    var owner : ?Principal = null;
+    var owner_name : ?Text = null;
+
+    var scan_count : Nat = 0;
+
+    // type Result<Ok, Err> = {#ok : Ok; #err : Err};
+
+    var history : [Event.Event] = [{
+        event_type = "Emanated";
+        event_name = "Emanated";
+        owner_name = null;
+        owner = null;
+        scan_count = 0;
+        time = Time.now();
+        images = null;
+        message = "The boot emanated from the internet."
+    }];
 
     var _name : Text = "Boot";
 
+
     // to set the owner of the boot, only works if the boot is not stolen and has no owner
-    public shared func set_owner(owner_name: Text, _owner : Principal, url: Text) : async Bool {
+    public shared({caller}) func request_ownership(_owner_name: Text, url: Text, event_name: Text, message: Text) : async Bool {
+        assert(owner == null);
 
-        if ((owner != null or stolen) and not lost) {
-            return false;
-        };
-
-        let counter = Scan.scan(url, scan_count);
-        if (counter <= 0) {
-          return false;
-        };
-        owner := ?_owner;
-        lost := false;
+        owner := ?caller;
+        owner_name := ?_owner_name;
+        counter := 0;
         history := Array.append(history, [{
-            event_type = #NewOwner;
-            owner_name = ?owner_name;
-            owner = ?_owner;
+            event_type = "Owned";
+            event_name = event_name;
+            owner_name = owner_name;
+            owner = owner;
             scan_count = scan_count;
             time = Time.now();
             images = ?[];
+            message = message;
         }]);
         true
     };
 
     // to abandon the ownership of the boot
-    public shared({caller}) func abandon_ownership() : async Bool {
-        if (?caller != owner) {
-            return false;
-        };
+    public shared({caller}) func abandon_ownership(event_name: Text, message: Text) : async Bool {
+        assert (?caller == owner);
+
+        counter := 0;
+        history := Array.append(history, [{
+            event_type = "Abandoned";
+            event_name = event_name;
+            owner_name = owner_name;
+            owner = owner;
+            scan_count = scan_count;
+            time = Time.now();
+            images = null;
+            message = message;
+        }]);
         owner := null;
-        history := Array.append(history, [{
-            event_type = #OwnerShipAbandoned;
-            owner_name = null;
-            owner = null;
-            scan_count = scan_count;
-            time = Time.now();
-            images = null;
-        }]);
+        owner_name := null;
         true
     };
 
-    // to report the boot as lost, if someone find it, they can own it
-    public shared({caller}) func report_lost() : async Bool {
+    var timer: Time.Time = 0;
+    var counter = 0;
+        // to abandon the ownership of the boot
+    public shared({caller}) func update_asset(url: Text, _event_name: Text, _sender_name: Text, _message: Text) : async Bool {
+
+        // let counter = Scan.scan(url, scan_count);
+        // assert(counter > 0);
+        // scan_count := counter;
+        var name = ?_sender_name;
+        if (?caller != owner and Time.now() - timer < 1_000_000_000 * 60 * 60 * 24) {
+            return false;
+        };
+        
         if (?caller != owner) {
-            return false;
+            counter += 1;
+            timer := Time.now();
+        }
+        else {
+            counter := 0;
+            name := owner_name;
         };
-        lost := true;
+
         history := Array.append(history, [{
-            event_type = #Lost;
-            owner_name = null;
-            owner = null;
+            event_type = "Updated";
+            event_name = _event_name;
+            owner_name = name;
+            owner = owner;
             scan_count = scan_count;
             time = Time.now();
             images = null;
+            message = _message;
+        }]);
+
+
+
+  
+
+        if (counter < 7) { return true; };
+        history := Array.append(history, [{
+            event_type = "Abandoned";
+            event_name = "Lost Ownership";
+            owner_name = owner_name;
+            owner = owner;
+            scan_count = scan_count;
+            time = Time.now();
+            images = null;
+            message = "The boot were abandoned because a stranger updated the boot 7 times.";
         }]);
         true
     };
 
-    // to report the boot as stolen, the thief can't own it, the boots are useless to them since the boot is reported as stolen
-    public shared({caller}) func report_steal() : async Bool {
-        if (?caller != owner) {
-            return false;
-        };
-        stolen := true;
+    public shared({caller}) func modify_asset(_event_name: Text, _message: Text) : async Bool {
+        assert (?caller == owner);
+
+        counter := 0;
         history := Array.append(history, [{
-            event_type = #Stolen;
-            owner_name = null;
-            owner = null;
+            event_type = "Modified";
+            event_name = _event_name;
+            owner_name = owner_name;
+            owner = owner;
             scan_count = scan_count;
             time = Time.now();
             images = null;
+            message = _message;
         }]);
         true
     };
 
-    // to report the boot as found, only the owner can find find them back, a new owener will just be a new owner
-    public shared({caller}) func report_found() : async Bool {
-        if (?caller != owner or history.size() < 2 or history[history.size() - 2].event_type != #Lost or history[history.size() - 1].event_type != #Stolen) {
-            return false;
+          public shared({caller}) func owning_state() : async Int {
+            if (owner == null) {
+                return 0;
+            }
+            else if (?caller == owner) {
+                return 1;
+            };
+            return 2;
         };
-        let last_owner_event = history[history.size() - 2];
-        stolen := false;
-        history := Array.append(history, [{
-            event_type = #Found;
-            owner_name = last_owner_event.owner_name;
-            owner = last_owner_event.owner;
-            scan_count = scan_count;
-            time = Time.now();
-            images = ?[];
-        }]);
-        true
-    };
 
     public shared func url_scan_tag(url: Text) : async Bool {
         let counter = Scan.scan(url, scan_count);
@@ -126,14 +159,17 @@ shared ({ caller = creator }) actor class Boot() = this {
         };
         scan_count := counter;
         true
-  };
+    };
 
-    public shared func get_history(url: Text) : async Result<[Event.Event], Text> {
-        let counter = Scan.scan(url, scan_count);
-        if (counter <= 0) {
-          return #err("Invalid URL");
-        };
-        scan_count := counter;
-        #ok(history)
-  };
+    public query func get_history() : async [Event.Event] {
+        history
+    };
+
+    public query func get_last_event() : async Event.Event {
+        Event.get_last_event(history)
+    };
+
+    public query func get_timer() : async Time.Time {
+        Time.now() - timer
+    };
 };
