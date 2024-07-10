@@ -32,6 +32,13 @@ shared ({ caller = creator }) actor class Boot() = this {
     public shared({caller}) func request_ownership(_owner_name: Text, url: Text, event_name: Text, message: Text) : async Bool {
         assert(owner == null);
 
+
+        // TODO : Put it back, removed for testing purposes
+        // let counter = Scan.scan(url, scan_count);
+        // assert(counter > 0);
+        // scan_count := counter;
+        ////////////////////////////////////////////////////
+        
         owner := ?caller;
         owner_name := ?_owner_name;
         counter := 0;

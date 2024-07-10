@@ -9,6 +9,7 @@ import Nat32 "mo:base/Nat32";
 import Debug "mo:base/Debug";
 import Sha "sha";
 import Cmac "cmac";
+import Cmac2 "cmac2";
 
 
 module {
@@ -64,14 +65,15 @@ module {
         };
 
         let queries = Iter.toArray(Text.split(full_query[1], #char '&'));
-        if (queries.size() != 3) {
+        if (queries.size() != 4) {
             return 0;
         };
 
         let cmac_query = Iter.toArray(Text.split(queries[2], #char '='));
         let counter_query = Iter.toArray(Text.split(queries[1], #char '='));
+        let number_query = Iter.toArray(Text.split(queries[3], #char '='));
 
-        if (cmac_query.size() != 2 or counter_query.size() != 2 or cmac_query[0] != "cmac" or counter_query[0] != "ctr") {
+        if (cmac_query.size() != 2 or counter_query.size() != 2 or number_query.size() != 2 or cmac_query[0] != "cmac" or counter_query[0] != "ctr" or number_query[0] != "number") {
             return 0;
         };
 
@@ -79,8 +81,16 @@ module {
         // convert the hex counter to a number
         var counter = hexToNat(counter_query[1]);
 
-        // get the hashed computed cmac
-        let cmacs = Cmac.get_cmacs();
+        // get the hashed computed cmac depending on the shoe numbers
+        if (number_query[1] != "0") {
+            let cmacs = Cmac.get_cmacs();
+        }
+        else if (number_query[1] != "1") {
+            let cmacs = Cmac2.get_cmacs();
+        }
+        else {
+            return 0;
+        };
 
         // sha256 the cmac query
         let sha = Sha.sha256(Array.map(Text.toArray(cmac_query[1]), func (c : Char) : Nat8 { Nat8.fromNat(Nat32.toNat(Char.toNat32(c)))}));
