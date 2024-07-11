@@ -82,11 +82,12 @@ module {
         var counter = hexToNat(counter_query[1]);
 
         // get the hashed computed cmac depending on the shoe numbers
+        var cmacs: [Text] = [];
         if (number_query[1] != "0") {
-            let cmacs = Cmac.get_cmacs();
+            cmacs := Cmac.get_cmacs();
         }
         else if (number_query[1] != "1") {
-            let cmacs = Cmac2.get_cmacs();
+            cmacs := Cmac2.get_cmacs();
         }
         else {
             return 0;

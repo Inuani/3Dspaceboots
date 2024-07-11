@@ -206,15 +206,10 @@
         font-family: 'Roboto', sans-serif;
     }
 
-    p,
-    label {
+    p {
     font:
         1rem 'Fira Sans',
         sans-serif;
-    }
-
-    input {
-    margin: 0.4rem;
     }
 
   </style>

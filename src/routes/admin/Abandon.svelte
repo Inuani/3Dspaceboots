@@ -33,18 +33,6 @@
 
 <style>
     /* Neo-brutalism styling */
-    .container {
-        /* max-width: 50vw; */
-        height: 20vw;
-        margin: 0 auto;
-        padding: 5vw;
-        border: 2px solid var(--border); /* Bold borders */
-        background-color: #f0f0f0; /* Light grey background */
-        box-shadow: 10px 10px 0 var(--border); /* Bold shadow for depth */
-        font-family: 'Arial var(--border)', sans-serif; /* Bold font */
-        font-size: 1rem;
-        text-transform: uppercase; /* Uppercase text */
-    }
 
     textarea {
         width: 100%;
@@ -77,11 +65,6 @@
         box-shadow: 0px 0px 0; /* Bold shadow for depth */
     }
 
-    .message {
-        margin-top: 20px;
-        font-size: 1rem;
-        color: #333333; /* Dark grey for message */
-    }
 
     .main {
         width: 100%;

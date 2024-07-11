@@ -79,7 +79,7 @@ module SDMMAC {"{"}
 
 def main():
     if len(args.key) != 32:
-        print("Key must be 32 characters long")
+        print("Key must be 32 characters long but is " + str(len(args.key)))
         return
 
     # if len(args.uid) != 8:

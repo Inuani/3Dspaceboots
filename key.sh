@@ -1,0 +1,2 @@
+python3 scripts/sha_motoko_generator.py -k d9154b601bafc4d63a66764458a3c036 -u 046219A2E51090 -c 333 -d src/backend/cmac.mo
+python3 scripts/sha_motoko_generator.py -k d9154b601bafc4d63a66764458a3c036 -u 046219A2E51090 -c 333 -d src/backend/cmac2.mo

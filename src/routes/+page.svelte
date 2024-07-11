@@ -43,12 +43,11 @@
       try {
         console.log($page.url.href);
         valid_scan = await $backendActor.url_scan_tag($page.url.href);
+        console.log(valid_scan)
       } catch (err) {
         console.error(err);
       }
     };
-   
-    checkValidScan()
 </script>
 
 <style>
