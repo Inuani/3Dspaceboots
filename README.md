@@ -6,7 +6,7 @@ This repository provides an example of a RAVE asset with a 3D model of space boo
 
 These boots are real, and this repo is an example of the representation of these boots on ICP.
 
-<img src="static/boots.jpg" alt="Space Boots" width="300"/>
+<img src="static/boots.jpg" alt="Space Boots" width="500"/>
 
 ## Example Project
 
