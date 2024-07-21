@@ -12,7 +12,7 @@ These boots are real, and this repo is an example of the representation of these
 
 You can view the canister that represent the boots [here](https://5a3r2-iyaaa-aaaas-aabaa-cai.icp0.io/).
 
-## The Untapped Potential of ICP
+## The Potential of ICP
 
 ICP, or Internet Computer, offers a unique approach to building decentralized applications through its canister smart contracts. These canisters function as mini servers or computers and are incredibly cost-effective to create.. This low cost unlocks vast potential for innovative applications.
 
@@ -25,8 +25,8 @@ One of the most important aspects is to connect the real asset to its correspond
 The association of the shoe and the canister is done through an NFC (Near Field Communication) chip, the same technology used for payment card systems. Each shoe has an NFC chip, and the URL of the canister is encoded into the tag. When you scan the tag on the shoe with any smartphone, the NFC tag redirects to the canister smart contract and validates the authenticity of the scan, providing a very accessible experience to everyone.
 
 ### Valid Scan
-<img src="static/validscan.png" alt="Valid Scan" width="300"/>
+<img src="static/validscan.png" alt="Valid Scan" width="600"/>
 
 ### Invalid Scan
-<img src="static/invalidscan.png" alt="Invalid Scan" width="300"/>
+<img src="static/invalidscan.png" alt="Invalid Scan" width="600"/>
 
