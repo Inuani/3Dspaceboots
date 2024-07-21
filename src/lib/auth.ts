@@ -65,8 +65,7 @@ const initAuthStore = (): AuthStore => {
     signIn: async () => {
       if (!authClient) authClient = await AuthClient.create();
       const identityProvider = localIdentityCanisterId
-        ? 'https://identity.ic0.app/#authorize'
-        // ? `http://${localIdentityCanisterId}.localhost:4943`
+        ? `http://${localIdentityCanisterId}.localhost:4943`
         : 'https://identity.ic0.app/#authorize';
       await authClient.login({
         identityProvider,
