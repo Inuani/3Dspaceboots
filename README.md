@@ -2,7 +2,9 @@
 
 This repository is an example of a RAVE asset, showcasing a pair of 3D space boots. RAVE stands for Real Asset Virtually Extended, which is a new concept for associating real-world items with their digital twins using canister smart contracts on the Internet Computer (ICP).
 
-![Space Boots](static/boots.jpg)
+These boots are real, and this repo is an example of these boots on ICP.
+
+<img src="static/boots.jpg" alt="Space Boots" width="300"/>
 
 ## Example Project
 
