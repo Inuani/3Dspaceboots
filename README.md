@@ -18,3 +18,15 @@ ICP, or Internet Computer, offers a unique approach to building decentralized ap
 
 One particularly exciting use case is the ability to connect a canister to a real-world asset, effectively creating a digital twin.
 
+## NFC Technology
+
+One of the most important aspects is to connect the real asset to its corresponding canister together:
+
+The association of the shoe and the canister is done through an NFC (Near Field Communication) chip, the same technology used for payment card systems. Each shoe has an NFC chip, and the URL of the canister is encoded into the tag. When you scan the tag on the shoe with any smartphone, the NFC tag redirects to the canister smart contract and validates the authenticity of the scan, providing a very accessible experience to everyone.
+
+### Valid Scan
+<img src="static/validscan.png" alt="Valid Scan" width="300"/>
+
+### Invalid Scan
+<img src="static/invalidscan.png" alt="Invalid Scan" width="300"/>
+
