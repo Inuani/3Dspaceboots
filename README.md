@@ -24,9 +24,9 @@ One of the most important aspects is to connect the real asset to its correspond
 
 The association of the shoe and the canister is done through an NFC (Near Field Communication) chip, the same technology used for payment card systems. Each shoe has an NFC chip, and the URL of the canister is encoded into the tag. When you scan the tag on the shoe with any smartphone, the NFC tag redirects to the canister smart contract and validates the authenticity of the scan, providing a very accessible experience to everyone.
 
-### Valid Scan
+## Valid Scan (accessing the canister via the scan of the NFC tag)
 <img src="static/validscan.png" alt="Valid Scan" width="600"/>
 
-### Invalid Scan
+## Invalid Scan (accessing the canister via the url only)
 <img src="static/invalidscan.png" alt="Invalid Scan" width="600"/>
 
