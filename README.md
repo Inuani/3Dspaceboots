@@ -14,7 +14,7 @@ You can view the canister that represent the boots [here](https://5a3r2-iyaaa-aa
 
 ## The Potential of ICP
 
-ICP, or Internet Computer, offers a unique approach to building decentralized applications through its canister smart contracts. These canisters function as mini servers or computers and are incredibly cost-effective to create.. This low cost unlocks vast potential for innovative applications.
+The canisters on ICP function as mini servers or computers and are incredibly cost-effective to create. This low cost unlocks vast potential for innovative applications.
 
 One particularly exciting use case is the ability to connect a canister to a real-world asset, effectively creating a digital twin.
 
